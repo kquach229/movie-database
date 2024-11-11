@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
+import { ThemeProvider } from '@mui/material/styles';
 import './App.css';
 import Navbar from './components/Navbar';
 import Auth from './pages/auth';
@@ -7,10 +7,11 @@ import Home from './pages/home';
 import Movie from './pages/movie';
 import Tv from './pages/tv';
 import Rated from './pages/rated';
+import theme from './theme.js';
 
 function App() {
   return (
-    <div>
+    <ThemeProvider theme={theme}>
       <Router>
         <Navbar />
         <Routes>
@@ -21,7 +22,7 @@ function App() {
           <Route path='/tv/:id' element={<Tv />} />
         </Routes>
       </Router>
-    </div>
+    </ThemeProvider>
   );
 }
 

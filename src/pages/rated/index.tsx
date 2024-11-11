@@ -5,6 +5,7 @@ import { DisplayType } from '../home';
 import { useQuery } from '@tanstack/react-query';
 import { getRatedMovies, getRatedTv } from './query';
 import ColumnDisplay from '../home/ColumnDisplay';
+import { Navigate } from 'react-router-dom';
 
 const Rated = () => {
   const [displayType, setDisplayType] = useState(DisplayType.Movies);
@@ -18,6 +19,10 @@ const Rated = () => {
     queryKey: ['ratedTv'],
     queryFn: getRatedTv,
   });
+
+  if (localStorage.getItem('guest_session_id') === null) {
+    return <Navigate to={'/auth'} />;
+  }
 
   if (isLoadingMovies || isLoadingTv) return <div>Loading...</div>;
 
@@ -48,6 +53,7 @@ const Rated = () => {
               : ratedTv.results || [] // Fallback to empty array
           }
           displayType={displayType}
+          isRated
         />
       </Box>
     </Grid>
