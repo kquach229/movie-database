@@ -6,7 +6,6 @@ import {
   CardMedia,
   FormControl,
   FormGroup,
-  FormLabel,
   Grid,
   Input,
   Snackbar,
@@ -14,12 +13,12 @@ import {
   Typography,
   Box,
   TextField,
-  Badge,
+  Tooltip,
 } from '@mui/material';
 import { DisplayType } from '.';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { rateMovie, rateTv } from './query';
 import { ellipsize } from '../../utils/utils.js';
 
@@ -44,10 +43,14 @@ const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
   const [ratings, setRatings] = useState<Record<number, number>>({});
   const [open, setOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(false);
+  const queryClient = useQueryClient();
 
-  const onSuccess = () => {
-    setToastMessage('Rating successfully');
+  const onSuccess = async (id: number) => {
+    setToastMessage('Rating successful');
     setOpen(true);
+    await queryClient.invalidateQueries({ queryKey: ['ratedTv'] });
+    await queryClient.invalidateQueries({ queryKey: ['ratedMovies'] });
+    await queryClient.resetQueries({ queryKey: ['ratings'] });
   };
 
   const onError = () => {
@@ -59,22 +62,21 @@ const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
     event?: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason
   ) => {
-    if (reason === 'clickaway') {
-      return;
-    }
     setOpen(false);
   };
 
   const { mutate: rateMovieMutation, status: rateMovieStatus } = useMutation({
     mutationKey: ['rateMovie'],
-    mutationFn: (id: number) => rateMovie(id, ratings[id]),
+    mutationFn: ({ id, rating }: { id: number; rating: number }) =>
+      rateMovie(id, rating),
     onSuccess,
     onError,
   });
 
   const { mutate: rateTvMutation, status: rateTvStatus } = useMutation({
     mutationKey: ['rateTv'],
-    mutationFn: (id: number) => rateTv(id, ratings[id]),
+    mutationFn: ({ id, rating }: { id: number; rating: number }) =>
+      rateTv(id, rating),
     onSuccess,
     onError,
   });
@@ -82,9 +84,9 @@ const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
   const rate =
     displayType === DisplayType.Movies ? rateMovieMutation : rateTvMutation;
 
-  const handleSubmit = (e: React.FormEvent, id: number) => {
+  const handleSubmit = (e: React.FormEvent, id: number, rating: number) => {
     e.preventDefault();
-    rate(id);
+    rate({ id, rating });
   };
 
   const handleRatingChange = (id: number, value: number) => {
@@ -96,7 +98,7 @@ const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
 
   const statusType =
     displayType === DisplayType.Movies ? rateMovieStatus : rateTvStatus;
-  console.log('kldsfjlksjflksjfklsj', data);
+
   return (
     <Grid
       container
@@ -117,18 +119,18 @@ const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
               }`}>
               <Card
                 sx={{
-                  height: { xs: 'auto', sm: '700px' }, // Responsive height
-                  width: { xs: '100%', sm: 'auto' }, // Full width on mobile, auto on larger screens
+                  height: { xs: 'auto', sm: '700px' },
+                  width: { xs: '100%', sm: 'auto' },
                   maxWidth: '300px',
-                  margin: '0 auto', // Center the card horizontally
+                  margin: '0 auto',
                 }}
                 raised>
                 <Box position='relative'>
                   <CardMedia
                     component='img'
                     sx={{
-                      height: { xs: '400px', sm: '500px' }, // Adjust height for smaller screens
-                      width: '100%', // Take full width of card
+                      height: { xs: '400px', sm: '500px' },
+                      width: '100%',
                       objectFit: 'cover',
                       objectPosition: 'center',
                     }}
@@ -162,10 +164,14 @@ const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
                   </Typography>
                   <Box display='flex' alignItems='center'>
                     <Typography fontWeight='bold' fontSize='11px'>
-                      Release Date:
+                      {displayType === DisplayType.Movies
+                        ? 'Release Date:'
+                        : 'First Aired'}
                     </Typography>
                     <Typography ml={1} fontSize='11px'>
-                      {item.release_date}
+                      {displayType === DisplayType.Movies
+                        ? item.release_date
+                        : item.first_air_date}
                     </Typography>
                   </Box>
                   <Typography
@@ -176,14 +182,14 @@ const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
                 </CardContent>
               </Card>
             </Link>
-            {isRated && <Typography>Your Rating: {item.rating}</Typography>}
-            <form onSubmit={(e) => handleSubmit(e, item.id)}>
+
+            <form onSubmit={(e) => handleSubmit(e, item.id, ratings[item.id])}>
               <FormControl
                 sx={{
-                  width: '100%', // Full width on mobile
-                  maxWidth: '300px', // Restrict max width on larger screens
+                  width: '100%',
+                  maxWidth: '300px',
                   display: 'flex',
-                  margin: '0 auto', // Center the form on smaller screens
+                  margin: '0 auto',
                 }}>
                 <FormGroup>
                   <Box display='flex' flexDirection='column'>
@@ -195,7 +201,25 @@ const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
                           justifyContent: 'space-between',
                           alignItems: 'center',
                         }}>
-                        <Typography>Rating</Typography>
+                        <Box
+                          textAlign='center'
+                          display='flex'
+                          flexDirection='column'>
+                          <Tooltip
+                            placement='right-start'
+                            title='Rate this work from 1-10. You will be able to see it on the rated page'>
+                            <Typography textAlign='left'>Rating</Typography>
+                          </Tooltip>
+                          {isRated && (
+                            <Typography
+                              fontSize='10px'
+                              color='info'
+                              textAlign='left'
+                              mt={0}>
+                              Your Rating: {item.rating}
+                            </Typography>
+                          )}
+                        </Box>
                         <TextField
                           InputProps={{
                             inputProps: { min: 1, max: 10 },

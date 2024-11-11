@@ -42,7 +42,8 @@ const Rated = () => {
       </Box>
       <Box textAlign='center' mb={2}>
         <Typography variant='h5'>
-          Rated {displayType === DisplayType.Movies ? 'Movies' : 'Tv Shows'}
+          Your Rated{' '}
+          {displayType === DisplayType.Movies ? 'Movies' : 'Tv Shows'}
         </Typography>
       </Box>
       <Box>
