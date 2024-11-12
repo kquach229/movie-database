@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { getMovieDetails } from './query';
-import { Grid, Box, Typography, Tooltip } from '@mui/material';
+import { Box, Typography, Tooltip } from '@mui/material';
 import { formatCurrency, formatMovieTime } from '../../utils/utils';
 import { FaInfoCircle } from 'react-icons/fa';
 import moment from 'moment';
@@ -139,7 +139,8 @@ const Movie = () => {
           <img
             style={{
               height: '700px', // Maintain aspect ratio
-              width: 'auto', // Scale down on smaller screens
+
+              width: 'auto',
               objectFit: 'cover',
               borderRadius: 5,
             }}

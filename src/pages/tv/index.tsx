@@ -139,7 +139,8 @@ const Tv = () => {
           <img
             style={{
               height: '700px', // Maintain aspect ratio
-              width: 'auto', // Scale down on smaller screens
+
+              width: 'auto',
               objectFit: 'cover',
               borderRadius: 5,
             }}
