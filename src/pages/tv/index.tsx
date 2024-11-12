@@ -161,7 +161,7 @@ const Tv = () => {
 
           {data.overview && (
             <>
-              <Typography variant='h6' fontWeight={700} mb={1}>
+              <Typography variant='h6' fontWeight={700} mb={1} mt={1}>
                 Overview
               </Typography>
               <Typography mb={3}>{data.overview}</Typography>

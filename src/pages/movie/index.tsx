@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { getMovieDetails } from './query';
-import { Box, Typography, Tooltip } from '@mui/material';
+import { Box, Typography, Tooltip, Grid } from '@mui/material';
 import { formatCurrency, formatMovieTime } from '../../utils/utils';
 import { FaInfoCircle } from 'react-icons/fa';
 import moment from 'moment';
@@ -150,7 +150,7 @@ const Movie = () => {
             alt={`${data.title} poster`}
           />
         </Box>
-        <Box
+        <Grid
           sx={{
             '&::before': {
               content: "''",
@@ -169,6 +169,7 @@ const Movie = () => {
           gap={2}
           mt={2}
           padding={4}
+          display='flex'
           textAlign='left'
           flexDirection='column'>
           <Typography
@@ -183,7 +184,7 @@ const Movie = () => {
               data.release_date.split('-')[0]
             })`}</Typography>
           </Typography>
-          <Box>
+          <Grid display='flex' flexDirection='column' gap={1}>
             <Typography color='text.primary'>
               {moment(data.release_date).format('MM/DD/YYYY')}{' '}
               {`(${data.origin_country || 'N/A'})`}
@@ -195,7 +196,7 @@ const Movie = () => {
               <strong>Runtime:</strong>
               <Typography>{formatMovieTime(data.runtime)}</Typography>
             </Typography>
-          </Box>
+          </Grid>
 
           <Typography
             color='secondary.main'
@@ -237,7 +238,7 @@ const Movie = () => {
               Based on {data.vote_count} ratings
             </Typography>
           </Box>
-        </Box>
+        </Grid>
       </Box>
     </Box>
   );
