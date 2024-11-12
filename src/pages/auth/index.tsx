@@ -30,11 +30,13 @@ const Auth = () => {
         '&::before': {
           content: '""',
           position: 'absolute',
+          opacity: 0.7,
+          backgroundColor: 'secondary.main',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: `url(${'./logo.jpg'})`,
+
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           filter: 'blur(5px)',
@@ -42,15 +44,24 @@ const Auth = () => {
         },
       }}>
       <Grid item xs={12} sm={8} md={6} lg={4}>
+        <img
+          style={{ objectFit: 'cover' }}
+          src={'/filmnation.png'}
+          width={480}
+          height={180}
+          alt='logo'
+        />
         <Typography
           variant='h5'
           fontWeight='bold'
+          mt={5}
           sx={{
-            color: 'secondary.main',
+            color: 'text.primary',
             marginBottom: 5,
             textAlign: 'center',
           }}>
-          Welcome to Cinema! Login by getting a guest session below
+          Welcome to Filmnation Entertainments! Login by getting a guest session
+          below
         </Typography>
 
         <FormControl fullWidth sx={{ marginBottom: 3 }}>

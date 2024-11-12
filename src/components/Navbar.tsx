@@ -19,7 +19,14 @@ const Navbar = () => {
             display: 'flex',
             justifyContent: 'space-between',
           }}>
-          <Box display='flex' gap={2}>
+          <Box display='flex' alignItems='center' gap={3}>
+            <img
+              style={{ objectFit: 'cover' }}
+              src={'/filmnation.png'}
+              width={120}
+              height={45}
+              alt='logo'
+            />
             <Link
               style={{
                 textDecoration: 'none',
