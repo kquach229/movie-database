@@ -168,7 +168,7 @@ const Movie = () => {
           }}
           gap={2}
           mt={2}
-          padding={4}
+          padding={{ xs: 0, md: 4 }}
           display='flex'
           textAlign='left'
           flexDirection='column'>

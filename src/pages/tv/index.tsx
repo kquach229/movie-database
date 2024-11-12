@@ -151,7 +151,12 @@ const Tv = () => {
           />
         </Box>
 
-        <Box textAlign='left' flexDirection='column' p={4} color='text.primary'>
+        <Box
+          textAlign='left'
+          flexDirection='column'
+          padding={{ xs: 0, md: 4 }}
+          mt={2}
+          color='text.primary'>
           <Typography variant='h3' fontWeight='bold' gutterBottom>
             {data.name}
           </Typography>
@@ -179,7 +184,7 @@ const Tv = () => {
           )}
 
           {data.production_companies.length > 0 && (
-            <Box mb={2}>
+            <Box mb={2} mt={2}>
               <Typography fontWeight='bold'>Production Companies:</Typography>
               <Typography>
                 {data.production_companies.map((comp) => comp.name).join(', ')}
