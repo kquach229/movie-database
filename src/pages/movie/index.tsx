@@ -5,6 +5,7 @@ import { Box, Typography, Tooltip } from '@mui/material';
 import { formatCurrency, formatMovieTime } from '../../utils/utils';
 import { FaInfoCircle } from 'react-icons/fa';
 import moment from 'moment';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Loader from '../../components/Loader';
 
 // Define interface for movie data
@@ -30,6 +31,7 @@ interface MovieData {
 const Movie = () => {
   const { id } = useParams<{ id: string }>(); // Ensure id is a string
   if (!id) return <div>Invalid movie id</div>;
+  const matches = useMediaQuery('(min-width:600px)');
 
   const { data, isLoading } = useQuery<MovieData>({
     queryKey: ['movie', id], // Include id in query key
@@ -138,9 +140,9 @@ const Movie = () => {
           }}>
           <img
             style={{
-              height: '700px', // Maintain aspect ratio
-
-              width: 'auto',
+              height: matches ? '700px' : 'auto',
+              width: matches ? 'auto' : '100%',
+              maxWidth: matches ? '700px' : '500px',
               objectFit: 'cover',
               borderRadius: 5,
             }}

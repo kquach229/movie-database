@@ -13,6 +13,7 @@ import {
 import { RiArrowDownWideFill } from 'react-icons/ri';
 import moment from 'moment';
 import { FaInfoCircle } from 'react-icons/fa';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Loader from '../../components/Loader';
 
 interface ITvPopoverProps {
@@ -48,6 +49,7 @@ interface ITvDetails {
 const Tv = () => {
   const [expanded, setExpanded] = useState<string | false>(false);
   const { id } = useParams();
+  const matches = useMediaQuery('(min-width:600px)');
   if (!id) return <div>Invalid tv id</div>;
 
   const { data, isLoading } = useQuery<ITvDetails>({
@@ -138,9 +140,9 @@ const Tv = () => {
           }}>
           <img
             style={{
-              height: '700px', // Maintain aspect ratio
-
-              width: 'auto',
+              height: matches ? '700px' : 'auto',
+              width: matches ? 'auto' : '100%',
+              maxWidth: matches ? '700px' : '500px',
               objectFit: 'cover',
               borderRadius: 5,
             }}
