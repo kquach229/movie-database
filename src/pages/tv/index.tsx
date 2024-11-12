@@ -138,8 +138,8 @@ const Tv = () => {
           }}>
           <img
             style={{
-              height: '700px',
-              width: 'auto',
+              height: '700px', // Maintain aspect ratio
+              width: 'auto', // Scale down on smaller screens
               objectFit: 'cover',
               borderRadius: 5,
             }}
@@ -200,7 +200,8 @@ const Tv = () => {
                 key={season.id}
                 expanded={expanded === `panel${index}`}
                 onChange={handleExpansion(`panel${index}`)}>
-                <AccordionSummary expandIcon={<RiArrowDownWideFill />}>
+                <AccordionSummary
+                  expandIcon={<RiArrowDownWideFill color='#d3d3d3' />}>
                   <Typography variant='subtitle1'>{season.name}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>

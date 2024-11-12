@@ -3,8 +3,13 @@ import Box from '@mui/material/Box';
 
 export default function Loader() {
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CircularProgress sx={{ color: 'secondary.main' }} />
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <CircularProgress size={'150px'} sx={{ color: 'secondary.main' }} />
     </Box>
   );
 }

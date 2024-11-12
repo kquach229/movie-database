@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { getMovieDetails } from './query';
-import { Grid2, Box, Typography, Tooltip } from '@mui/material';
+import { Grid, Box, Typography, Tooltip } from '@mui/material';
 import { formatCurrency, formatMovieTime } from '../../utils/utils';
 import { FaInfoCircle } from 'react-icons/fa';
 import moment from 'moment';
@@ -114,42 +114,40 @@ const Movie = () => {
           zIndex: -1,
         },
       }}>
-      <Grid2 display='flex' flexDirection={{ xs: 'column', md: 'row' }}>
-        <Box p={{ xs: 0, md: 3 }} mt={{ xs: 3, md: 0 }}>
-          <Tooltip
-            sx={{
-              backgroundColor: 'transparent !important',
-              '.MuiTooltip-tooltip': {
-                backgroundColor: 'transparent',
-                boxShadow: 'none',
-              },
-            }}
-            leaveDelay={500}
-            title={extraProductionContent(data)}
-            placement='bottom-start'>
-            <Box
-              sx={{ position: 'absolute', top: 20, right: 20, zIndex: 10000 }}>
-              <FaInfoCircle color='#A13333' />
-            </Box>
-          </Tooltip>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-            }}>
-            <img
-              style={{
-                height: '700px',
-                width: 'auto',
-                objectFit: 'cover',
-                borderRadius: 5,
-              }}
-              src={`https://image.tmdb.org/t/p/original/${data.poster_path}`}
-              alt={`${data.title} poster`}
-            />
-          </Box>
+      <Tooltip
+        sx={{
+          backgroundColor: 'transparent !important',
+          '.MuiTooltip-tooltip': {
+            backgroundColor: 'transparent',
+            boxShadow: 'none',
+          },
+        }}
+        leaveDelay={500}
+        title={extraProductionContent(data)}
+        placement='bottom-start'>
+        <Box sx={{ position: 'absolute', top: 20, right: 20, zIndex: 10000 }}>
+          <FaInfoCircle color='#A13333' />
         </Box>
-        <Grid2
+      </Tooltip>
+      <Box display='flex' flexDirection={{ xs: 'column', md: 'row' }} p={3}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            p: { xs: 0, md: 3 },
+          }}>
+          <img
+            style={{
+              height: '700px', // Maintain aspect ratio
+              width: 'auto', // Scale down on smaller screens
+              objectFit: 'cover',
+              borderRadius: 5,
+            }}
+            src={`https://image.tmdb.org/t/p/original/${data.poster_path}`}
+            alt={`${data.title} poster`}
+          />
+        </Box>
+        <Box
           sx={{
             '&::before': {
               content: "''",
@@ -166,7 +164,6 @@ const Movie = () => {
             },
           }}
           gap={2}
-          container
           mt={2}
           padding={4}
           textAlign='left'
@@ -237,8 +234,8 @@ const Movie = () => {
               Based on {data.vote_count} ratings
             </Typography>
           </Box>
-        </Grid2>
-      </Grid2>
+        </Box>
+      </Box>
     </Box>
   );
 };
