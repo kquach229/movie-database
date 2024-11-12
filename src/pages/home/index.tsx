@@ -1,10 +1,11 @@
-import { Button } from '@mui/material';
+import { Tabs, Tab, Divider, Typography } from '@mui/material';
 import { useState } from 'react';
 import ColumnDisplay from './ColumnDisplay';
 import { useQuery } from '@tanstack/react-query';
 import { fetchMovies, fetchTvShows } from './query';
 import { Navigate } from 'react-router-dom';
-
+import { MdLocalMovies } from 'react-icons/md';
+import { PiTelevisionSimpleFill } from 'react-icons/pi';
 export enum DisplayType {
   Movies = 'movies',
   TvShows = 'tvshows',
@@ -27,30 +28,46 @@ const Home = () => {
   if (localStorage.getItem('guest_session_id') === null) {
     return <Navigate to={'/auth'} />;
   }
+
   return (
     <div style={{ marginTop: 50, height: 'auto' }}>
-      <Button
-        color={displayType === DisplayType.Movies ? 'success' : 'info'}
-        onClick={() => setDisplayType(DisplayType.Movies)}>
-        Movies
-      </Button>
-      <Button
-        color={displayType === DisplayType.TvShows ? 'success' : 'info'}
-        onClick={() => setDisplayType(DisplayType.TvShows)}>
-        Tv Shows
-      </Button>
+      <Tabs
+        indicatorColor='secondary'
+        textColor='secondary'
+        sx={{ width: '100%' }}
+        value={displayType}>
+        <Tab
+          onClick={() => setDisplayType(DisplayType.Movies)}
+          iconPosition='top'
+          label='Movies'
+          value={DisplayType.Movies}
+          icon={<MdLocalMovies size={22} />}
+        />
+        <Tab
+          onClick={() => setDisplayType(DisplayType.TvShows)}
+          iconPosition='top'
+          label='Shows'
+          value={DisplayType.TvShows}
+          icon={<PiTelevisionSimpleFill size={22} />}
+        />
+      </Tabs>
+      <Divider sx={{ mt: 2 }} color='#A13333' />
+
       {isLoadingMovies || isLoadingTv ? (
         'Loading...'
       ) : (
-        <div style={{ marginTop: 20 }}>
+        <div style={{ marginTop: 50 }}>
+          <Typography variant='h5' mt={3} mb={3}>
+            Popular {displayType === DisplayType.Movies ? 'Movies' : 'TV Shows'}
+          </Typography>
           {displayType === DisplayType.Movies ? (
             <ColumnDisplay
-              data={movieData.results}
+              data={movieData?.results || []}
               displayType={DisplayType.Movies}
             />
           ) : (
             <ColumnDisplay
-              data={tvData.results}
+              data={tvData?.results || []}
               displayType={DisplayType.TvShows}
             />
           )}

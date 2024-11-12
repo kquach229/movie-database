@@ -7,11 +7,12 @@ import Home from './pages/home';
 import Movie from './pages/movie';
 import Tv from './pages/tv';
 import Rated from './pages/rated';
-import theme from './theme.js';
+import theme from './theme';
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
+      {/* This helps to apply the theme's background and text colors */}
       <Router>
         <Navbar />
         <Routes>

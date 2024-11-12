@@ -1,4 +1,4 @@
-import { Toolbar, AppBar, Box, Button, Typography } from '@mui/material';
+import { Toolbar, AppBar, Box, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 const Navbar = () => {
@@ -12,26 +12,53 @@ const Navbar = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position='static'>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Box>
-            <Button>
-              <Link to='/'>Home</Link>
-            </Button>
+        <Toolbar
+          sx={{
+            backgroundImage: 'linear-gradient(to right, #A13333, #1b1b1d);',
 
-            <Button>
-              <Link to='/rated'>Rated</Link>
-            </Button>
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}>
+          <Box display='flex' gap={2}>
+            <Link
+              style={{
+                textDecoration: 'none',
+                color: '#d3d3d3',
+                fontWeight: 'bold',
+              }}
+              to='/'>
+              Home
+            </Link>
+
+            <Link
+              style={{
+                textDecoration: 'none',
+                color: '#d3d3d3',
+                fontWeight: 'bold',
+              }}
+              to='/rated'>
+              Rated
+            </Link>
           </Box>
 
           <Box>
             {isLoggedIn ? (
-              <Button color='secondary' onClick={logout}>
-                <Typography color='yellow'>Logout</Typography>
-              </Button>
+              <Typography
+                fontWeight='bold'
+                onClick={logout}
+                color='text.primary'>
+                Logout
+              </Typography>
             ) : (
-              <Button>
-                <Link to='/auth'>Auth</Link>
-              </Button>
+              <Link
+                to='/auth'
+                style={{
+                  textDecoration: 'none',
+                  color: '#A13333',
+                  fontWeight: 'bold',
+                }}>
+                Auth
+              </Link>
             )}
           </Box>
         </Toolbar>

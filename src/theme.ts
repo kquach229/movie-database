@@ -2,8 +2,12 @@
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
+  typography: {
+    fontFamily: 'IBM Plex Mono',
+    fontSize: 14,
+  },
   palette: {
-    mode: 'dark', // Ensures dark mode background settings
+    mode: 'light', // Ensures dark mode background settings
     background: {
       default: '#1b1b1d', // Charcoal Black for the main background
       paper: '#2e2e2e', // Deep Gray for cards or paper components

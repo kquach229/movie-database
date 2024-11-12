@@ -7,7 +7,6 @@ import {
   FormControl,
   FormGroup,
   Grid,
-  Input,
   Snackbar,
   SnackbarCloseReason,
   Typography,
@@ -18,18 +17,23 @@ import {
 import { DisplayType } from '.';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueryClient,
+  UseMutationResult,
+} from '@tanstack/react-query';
 import { rateMovie, rateTv } from './query';
-import { ellipsize } from '../../utils/utils.js';
+import { ellipsize } from '../../utils/utils';
 
 interface DisplayData {
   id: number;
-  overview: string;
-  poster_path: string;
+  overview?: string;
+  poster_path?: string;
   title?: string;
   name?: string;
-  vote_average: number;
-  release_date: string;
+  vote_average?: number;
+  release_date?: string;
+  first_air_date?: string;
   rating?: number;
 }
 
@@ -39,18 +43,24 @@ interface Props {
   isRated?: boolean;
 }
 
-const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
+const ColumnDisplay = ({ data, displayType, isRated = false }: Props) => {
   const [ratings, setRatings] = useState<Record<number, number>>({});
   const [open, setOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | false>(false);
   const queryClient = useQueryClient();
 
-  const onSuccess = async (id: number) => {
+  const onSuccess = async (id: number, rating: number) => {
+    await queryClient.resetQueries({ queryKey: ['ratings'] });
+    await queryClient.invalidateQueries({ queryKey: ['ratedMovies'] });
+    await queryClient.invalidateQueries({ queryKey: ['ratedTv'] });
+
     setToastMessage('Rating successful');
     setOpen(true);
-    await queryClient.invalidateQueries({ queryKey: ['ratedTv'] });
-    await queryClient.invalidateQueries({ queryKey: ['ratedMovies'] });
-    await queryClient.resetQueries({ queryKey: ['ratings'] });
+
+    setRatings((prevRatings) => ({
+      ...prevRatings,
+      [id]: rating,
+    }));
   };
 
   const onError = () => {
@@ -65,26 +75,52 @@ const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
     setOpen(false);
   };
 
-  const { mutate: rateMovieMutation, status: rateMovieStatus } = useMutation({
-    mutationKey: ['rateMovie'],
-    mutationFn: ({ id, rating }: { id: number; rating: number }) =>
-      rateMovie(id, rating),
-    onSuccess,
-    onError,
-  });
+  interface RatingResponse {
+    rating: number;
+    message: string;
+    // other fields
+  }
 
-  const { mutate: rateTvMutation, status: rateTvStatus } = useMutation({
-    mutationKey: ['rateTv'],
-    mutationFn: ({ id, rating }: { id: number; rating: number }) =>
-      rateTv(id, rating),
-    onSuccess,
-    onError,
-  });
+  const {
+    mutate: rateMovieMutation,
+    status: rateMovieStatus,
+  }: UseMutationResult<number, unknown, { id: number; rating: number }> =
+    useMutation({
+      mutationKey: ['rateMovie'],
+      mutationFn: ({ id, rating }: { id: number; rating: number }) => {
+        return rateMovie(id, rating).then((response: RatingResponse) => {
+          // Ensure response has the correct structure
+          return response.value; // Return only the rating (which is a number)
+        });
+      },
+      onSuccess,
+      onError,
+    });
+
+  const {
+    mutate: rateTvMutation,
+    status: rateTvStatus,
+  }: UseMutationResult<number, unknown, { id: number; rating: number }> =
+    useMutation({
+      mutationKey: ['rateTv'],
+      mutationFn: ({ id, rating }: { id: number; rating: number }) => {
+        return rateTv(id, rating).then((response: RatingResponse) => {
+          // Ensure response has the correct structure
+          return response.rating; // Return only the rating (which is a number)
+        });
+      },
+      onSuccess,
+      onError,
+    });
 
   const rate =
     displayType === DisplayType.Movies ? rateMovieMutation : rateTvMutation;
 
-  const handleSubmit = (e: React.FormEvent, id: number, rating: number) => {
+  const handleSubmit = async (
+    e: React.FormEvent,
+    id: number,
+    rating: number
+  ) => {
     e.preventDefault();
     rate({ id, rating });
   };
@@ -96,7 +132,7 @@ const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
     }));
   };
 
-  const statusType =
+  const statusType: 'success' | 'error' | 'idle' | 'pending' =
     displayType === DisplayType.Movies ? rateMovieStatus : rateTvStatus;
 
   return (
@@ -123,6 +159,7 @@ const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
                   width: { xs: '100%', sm: 'auto' },
                   maxWidth: '300px',
                   margin: '0 auto',
+                  bgcolor: '#1b1b1d',
                 }}
                 raised>
                 <Box position='relative'>
@@ -152,13 +189,14 @@ const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
                       borderRadius: '30px',
                     }}
                     color='secondary'>
-                    {item.vote_average.toFixed(1)}
+                    {item.vote_average?.toFixed(1)}
                   </Typography>
                 </Box>
                 <CardContent sx={{ textAlign: 'left' }}>
                   <Typography
                     fontWeight='bold'
                     variant='h6'
+                    color='#A13333'
                     fontSize={{ xs: '16px', sm: '18px' }}>
                     {title}
                   </Typography>
@@ -177,69 +215,77 @@ const ColumnDisplay = ({ data, displayType, isRated }: Props) => {
                   <Typography
                     fontSize={{ xs: '10px', sm: '12px' }}
                     color='textPrimary'>
-                    {ellipsize(item.overview)}
+                    {ellipsize(item?.overview || '', 125)}
                   </Typography>
+                  {isRated && (
+                    <Typography
+                      fontSize='12px'
+                      color='info'
+                      textAlign='left'
+                      mt={1}>
+                      Your Rating: {item.rating}
+                    </Typography>
+                  )}
                 </CardContent>
               </Card>
             </Link>
 
-            <form onSubmit={(e) => handleSubmit(e, item.id, ratings[item.id])}>
-              <FormControl
-                sx={{
-                  width: '100%',
-                  maxWidth: '300px',
-                  display: 'flex',
-                  margin: '0 auto',
-                }}>
-                <FormGroup>
-                  <Box display='flex' flexDirection='column'>
-                    <Box>
-                      <FormGroup
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}>
-                        <Box
-                          textAlign='center'
-                          display='flex'
-                          flexDirection='column'>
-                          <Tooltip
-                            placement='right-start'
-                            title='Rate this work from 1-10. You will be able to see it on the rated page'>
-                            <Typography textAlign='left'>Rating</Typography>
-                          </Tooltip>
-                          {isRated && (
-                            <Typography
-                              fontSize='10px'
-                              color='info'
-                              textAlign='left'
-                              mt={0}>
-                              Your Rating: {item.rating}
-                            </Typography>
-                          )}
-                        </Box>
-                        <TextField
-                          InputProps={{
-                            inputProps: { min: 1, max: 10 },
-                          }}
-                          type='number'
-                          sx={{ width: '50%', padding: '20px' }}
-                          value={ratings[item.id] || 0}
-                          onChange={(e) =>
-                            handleRatingChange(item.id, Number(e.target.value))
-                          }
-                        />
-                      </FormGroup>
+            {!isRated && (
+              <form
+                onSubmit={(e) =>
+                  handleSubmit(e, item.id, ratings[item.id] || 0)
+                }>
+                <FormControl
+                  sx={{
+                    width: '100%',
+                    maxWidth: '300px',
+                    display: 'flex',
+                    margin: '0 auto',
+                  }}>
+                  <FormGroup>
+                    <Box display='flex' flexDirection='column'>
+                      <Box>
+                        <FormGroup
+                          sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}>
+                          <Box
+                            textAlign='center'
+                            display='flex'
+                            flexDirection='column'>
+                            <Tooltip
+                              placement='right-start'
+                              title='Rate this work from 1-10. You will be able to see it on the rated page'>
+                              <Typography textAlign='left'>Rating</Typography>
+                            </Tooltip>
+                          </Box>
+                          <TextField
+                            InputProps={{
+                              inputProps: { min: 1, max: 10 },
+                            }}
+                            type='number'
+                            sx={{ width: '50%', padding: '20px' }}
+                            value={ratings[item.id] || 0}
+                            onChange={(e) =>
+                              handleRatingChange(
+                                item.id,
+                                Number(e.target.value)
+                              )
+                            }
+                          />
+                        </FormGroup>
+                      </Box>
+                      <Button variant='contained' type='submit' fullWidth>
+                        Rate!
+                      </Button>
                     </Box>
-                    <Button variant='contained' type='submit' fullWidth>
-                      Rate!
-                    </Button>
-                  </Box>
-                </FormGroup>
-              </FormControl>
-            </form>
+                  </FormGroup>
+                </FormControl>
+              </form>
+            )}
           </Grid>
         );
       })}
