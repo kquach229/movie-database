@@ -3,8 +3,7 @@ export const fetchMovies = async () => {
     'https://api.themoviedb.org/3/movie/popular?language=en-US&page=1',
     {
       headers: {
-        Authorization:
-          'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzMDZkY2QyMmVmYzUzNDQ1OTgwNmY0N2Y3NThjOGI4MSIsIm5iZiI6MTczMTI3MDUyNC43NTA5Mjc3LCJzdWIiOiI1ZjVmZmRlNTkzMzg4YjAwMzc1YjljNjIiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.zcVX71joebz2W-ds2UW_nrbxTijrnsYm8m2zvf8xCHo',
+        Authorization: `${import.meta.env.VITE_API_KEY_BEAR}`,
       },
     }
   );
@@ -19,8 +18,7 @@ export const fetchTvShows = async () => {
     'https://api.themoviedb.org/3/tv/popular?language=en-US&page=1',
     {
       headers: {
-        Authorization:
-          'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzMDZkY2QyMmVmYzUzNDQ1OTgwNmY0N2Y3NThjOGI4MSIsIm5iZiI6MTczMTI3MDUyNC43NTA5Mjc3LCJzdWIiOiI1ZjVmZmRlNTkzMzg4YjAwMzc1YjljNjIiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.zcVX71joebz2W-ds2UW_nrbxTijrnsYm8m2zvf8xCHo',
+        Authorization: `${import.meta.env.VITE_API_KEY_BEAR}`,
       },
     }
   );
@@ -30,7 +28,7 @@ export const fetchTvShows = async () => {
   return data;
 };
 
-export const rateMovie = async (movieId, rating) => {
+export const rateMovie = async (movieId: number, rating: number) => {
   const res = await fetch(
     `https://api.themoviedb.org/3/movie/${movieId}/rating?guest_session_id=${localStorage.getItem(
       'guest_session_id'
@@ -48,7 +46,7 @@ export const rateMovie = async (movieId, rating) => {
   return res.json();
 };
 
-export const rateTv = async (tvId, rating) => {
+export const rateTv = async (tvId: number, rating: number) => {
   const res = await fetch(
     `https://api.themoviedb.org/3/tv/${tvId}/rating?guest_session_id=${localStorage.getItem(
       'guest_session_id'

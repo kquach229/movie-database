@@ -44,6 +44,7 @@ const Navbar = () => {
           <Box>
             {isLoggedIn ? (
               <Typography
+                sx={{ cursor: 'pointer' }}
                 fontWeight='bold'
                 onClick={logout}
                 color='text.primary'>
@@ -56,6 +57,7 @@ const Navbar = () => {
                   textDecoration: 'none',
                   color: '#A13333',
                   fontWeight: 'bold',
+                  cursor: 'pointer',
                 }}>
                 Auth
               </Link>

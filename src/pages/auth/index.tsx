@@ -1,4 +1,4 @@
-import { Button, FormControl, Grid2, Typography } from '@mui/material';
+import { Button, FormControl, Grid, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { mutationLogin } from './mutation';
 import { useNavigate } from 'react-router-dom';
@@ -9,25 +9,68 @@ const Auth = () => {
     mutationKey: ['login'],
     mutationFn: mutationLogin,
   });
+
   const handleLogin = async () => {
     const data = await mutateAsync();
-
     localStorage.setItem('guest_session_id', data.guest_session_id);
     navigate('/');
   };
+
   return (
-    <Grid2
-      maxWidth={450}
-      columnSpacing={2}
+    <Grid
+      container
       justifyContent='center'
-      direction='column'
       alignItems='center'
-      textAlign='center'>
-      <Typography>Welcome! Login by registering as a Guest below</Typography>
-      <FormControl>
-        <Button onClick={handleLogin}>Login</Button>
-      </FormControl>
-    </Grid2>
+      sx={{
+        padding: { xs: 2, sm: 3 }, // Responsive padding
+        boxShadow: 3,
+        height: '100vh',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: `url(${'./logo.jpg'})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'blur(5px)',
+          zIndex: -1,
+        },
+      }}>
+      <Grid item xs={12} sm={8} md={6} lg={4}>
+        <Typography
+          variant='h5'
+          fontWeight='bold'
+          sx={{
+            color: 'secondary.main',
+            marginBottom: 5,
+            textAlign: 'center',
+          }}>
+          Welcome to Cinema! Login by getting a guest session below
+        </Typography>
+
+        <FormControl fullWidth sx={{ marginBottom: 3 }}>
+          <Button
+            onClick={handleLogin}
+            variant='contained'
+            color='secondary'
+            sx={{
+              padding: '10px 20px',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              textTransform: 'none',
+              borderRadius: '5px',
+              width: '100%', // Make button full-width on smaller screens
+            }}>
+            Login
+          </Button>
+        </FormControl>
+      </Grid>
+    </Grid>
   );
 };
 

@@ -8,7 +8,6 @@ import {
   FormGroup,
   Grid,
   Snackbar,
-  SnackbarCloseReason,
   Typography,
   Box,
   TextField,
@@ -46,35 +45,13 @@ interface Props {
 const ColumnDisplay = ({ data, displayType, isRated = false }: Props) => {
   const [ratings, setRatings] = useState<Record<number, number>>({});
   const [open, setOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | false>(false);
   const queryClient = useQueryClient();
 
-  const onSuccess = async (id: number, rating: number) => {
-    await queryClient.resetQueries({ queryKey: ['ratings'] });
-    await queryClient.invalidateQueries({ queryKey: ['ratedMovies'] });
-    await queryClient.invalidateQueries({ queryKey: ['ratedTv'] });
-
-    setToastMessage('Rating successful');
-    setOpen(true);
-
-    setRatings((prevRatings) => ({
-      ...prevRatings,
-      [id]: rating,
-    }));
-  };
-
-  const onError = () => {
-    setToastMessage('Rating error');
-    setOpen(true);
-  };
-
-  const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
+  const handleClose = () => {
     setOpen(false);
   };
 
+  // Assuming RatingResponse looks like this
   interface RatingResponse {
     rating: number;
     message: string;
@@ -88,13 +65,32 @@ const ColumnDisplay = ({ data, displayType, isRated = false }: Props) => {
     useMutation({
       mutationKey: ['rateMovie'],
       mutationFn: ({ id, rating }: { id: number; rating: number }) => {
-        return rateMovie(id, rating).then((response: RatingResponse) => {
-          // Ensure response has the correct structure
-          return response.value; // Return only the rating (which is a number)
-        });
+        return rateMovie(id, rating).then(
+          (response: RatingResponse) => response.rating // Return only the `rating` value
+        );
       },
-      onSuccess,
-      onError,
+      onSuccess: (
+        rating: number,
+        variables: { id: number; rating: number }
+      ) => {
+        const { id } = variables; // Extract the `id` from the variables
+
+        // Reset and invalidate queries
+        queryClient.resetQueries({ queryKey: ['ratings'] });
+        queryClient.invalidateQueries({ queryKey: ['ratedMovies'] });
+        queryClient.invalidateQueries({ queryKey: ['ratedTv'] });
+
+        setOpen(true);
+
+        // Update ratings state
+        setRatings((prevRatings) => ({
+          ...prevRatings,
+          [id]: rating, // Update the rating for the specific id
+        }));
+      },
+      onError: (error: unknown) => {
+        console.error('Error rating movie:', error);
+      },
     });
 
   const {
@@ -104,13 +100,32 @@ const ColumnDisplay = ({ data, displayType, isRated = false }: Props) => {
     useMutation({
       mutationKey: ['rateTv'],
       mutationFn: ({ id, rating }: { id: number; rating: number }) => {
-        return rateTv(id, rating).then((response: RatingResponse) => {
-          // Ensure response has the correct structure
-          return response.rating; // Return only the rating (which is a number)
-        });
+        return rateTv(id, rating).then(
+          (response: RatingResponse) => response.rating // Return only the `rating` value
+        );
       },
-      onSuccess,
-      onError,
+      onSuccess: (
+        rating: number,
+        variables: { id: number; rating: number }
+      ) => {
+        const { id } = variables; // Extract the `id` from the variables
+
+        // Reset and invalidate queries
+        queryClient.resetQueries({ queryKey: ['ratings'] });
+        queryClient.invalidateQueries({ queryKey: ['ratedMovies'] });
+        queryClient.invalidateQueries({ queryKey: ['ratedTv'] });
+
+        setOpen(true);
+
+        // Update ratings state
+        setRatings((prevRatings) => ({
+          ...prevRatings,
+          [id]: rating, // Update the rating for the specific id
+        }));
+      },
+      onError: (error: unknown) => {
+        console.error('Error rating TV:', error);
+      },
     });
 
   const rate =
@@ -132,8 +147,14 @@ const ColumnDisplay = ({ data, displayType, isRated = false }: Props) => {
     }));
   };
 
-  const statusType: 'success' | 'error' | 'idle' | 'pending' =
-    displayType === DisplayType.Movies ? rateMovieStatus : rateTvStatus;
+  const statusType =
+    displayType === DisplayType.Movies
+      ? rateMovieStatus === 'success'
+        ? 'success'
+        : 'error'
+      : rateTvStatus === 'success'
+      ? 'success'
+      : 'error';
 
   return (
     <Grid

@@ -9,8 +9,7 @@ export const getRatedMovies = async () => {
       method: 'GET',
       headers: {
         accept: 'application/json',
-        Authorization:
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzMDZkY2QyMmVmYzUzNDQ1OTgwNmY0N2Y3NThjOGI4MSIsIm5iZiI6MTczMTI3MDQwNS42MjM3ODIyLCJzdWIiOiI1ZjVmZmRlNTkzMzg4YjAwMzc1YjljNjIiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.17NOctTvx8nPGviwCbDk0pUVPfZe_XKIPKmrNcuKaWY',
+        Authorization: `${import.meta.env.VITE_API_KEY_BEAR}`,
       },
     }
   );
