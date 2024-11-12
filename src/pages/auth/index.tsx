@@ -47,12 +47,12 @@ const Auth = () => {
         <img
           style={{ objectFit: 'cover' }}
           src={'/filmnation.png'}
-          width={480}
-          height={180}
+          width={'100%'}
+          height={'auto'}
           alt='logo'
         />
         <Typography
-          variant='h5'
+          fontSize='15px'
           fontWeight='bold'
           mt={5}
           sx={{
@@ -60,8 +60,7 @@ const Auth = () => {
             marginBottom: 5,
             textAlign: 'center',
           }}>
-          Welcome to Filmnation Entertainments! Login by getting a guest session
-          below
+          Welcome to Filmnation Entertainments! Login below
         </Typography>
 
         <FormControl fullWidth sx={{ marginBottom: 3 }}>
