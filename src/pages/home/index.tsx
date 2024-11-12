@@ -6,6 +6,7 @@ import { fetchMovies, fetchTvShows } from './query';
 import { Navigate } from 'react-router-dom';
 import { MdLocalMovies } from 'react-icons/md';
 import { PiTelevisionSimpleFill } from 'react-icons/pi';
+import Loader from '../../components/Loader';
 export enum DisplayType {
   Movies = 'movies',
   TvShows = 'tvshows',
@@ -54,7 +55,7 @@ const Home = () => {
       <Divider sx={{ mt: 2 }} color='#A13333' />
 
       {isLoadingMovies || isLoadingTv ? (
-        'Loading...'
+        <Loader />
       ) : (
         <div style={{ marginTop: 50 }}>
           <Typography variant='h5' mt={3} mb={3}>

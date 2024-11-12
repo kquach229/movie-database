@@ -13,6 +13,7 @@ import {
 import { RiArrowDownWideFill } from 'react-icons/ri';
 import moment from 'moment';
 import { FaInfoCircle } from 'react-icons/fa';
+import Loader from '../../components/Loader';
 
 interface ITvPopoverProps {
   first_air_date: string;
@@ -111,7 +112,7 @@ const Tv = () => {
     </Box>
   );
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loader />;
   if (!data) return <div>Error loading data</div>;
 
   return (

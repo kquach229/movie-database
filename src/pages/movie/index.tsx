@@ -5,6 +5,7 @@ import { Grid2, Box, Typography, Tooltip } from '@mui/material';
 import { formatCurrency, formatMovieTime } from '../../utils/utils';
 import { FaInfoCircle } from 'react-icons/fa';
 import moment from 'moment';
+import Loader from '../../components/Loader';
 
 // Define interface for movie data
 interface MovieData {
@@ -35,7 +36,7 @@ const Movie = () => {
     queryFn: () => getMovieDetails(id),
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loader />;
   if (!data) return <div>No data available</div>; // Handle possible null data
 
   // Type the parameter for extraProductionContent

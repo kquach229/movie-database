@@ -163,7 +163,8 @@ const ColumnDisplay = ({ data, displayType, isRated = false }: Props) => {
       justifyContent='center'
       alignItems='center'
       spacing={2}
-      columns={12}>
+      columns={12}
+      mb={5}>
       {data.map((item) => {
         const title =
           displayType === DisplayType.Movies ? item.title : item.name;

@@ -8,6 +8,7 @@ import ColumnDisplay from '../home/ColumnDisplay';
 import { Navigate } from 'react-router-dom';
 import { PiTelevisionSimple } from 'react-icons/pi';
 import { MdLocalMovies } from 'react-icons/md';
+import Loader from '../../components/Loader';
 
 const Rated = () => {
   const [displayType, setDisplayType] = useState(DisplayType.Movies);
@@ -26,7 +27,7 @@ const Rated = () => {
     return <Navigate to={'/auth'} />;
   }
 
-  if (isLoadingMovies || isLoadingTv) return <div>Loading...</div>;
+  if (isLoadingTv || isLoadingMovies) return <Loader />;
 
   return (
     <Grid container direction='column' mt={5}>
@@ -57,6 +58,35 @@ const Rated = () => {
           {displayType === DisplayType.Movies ? 'Movies' : 'Tv Shows'}
         </Typography>
       </Box>
+      {/* Inline conditional rendering */}
+      {displayType === DisplayType.Movies && !ratedMovies?.results && (
+        <Box textAlign='center' mt={3}>
+          <img
+            style={{ borderRadius: '5%' }}
+            src={'./nothing.jpg'}
+            height={150}
+            width={'auto'}
+          />
+          <Typography variant='body1' mt={5}>
+            Nothing to display. Start rating some movies and they will appear
+            here!
+          </Typography>
+        </Box>
+      )}
+      {displayType === DisplayType.TvShows && !ratedTv?.results && (
+        <Box textAlign='center' mt={3}>
+          <img
+            style={{ borderRadius: '5%' }}
+            src={'./nothing.jpg'}
+            height={150}
+            width={'auto'}
+          />
+          <Typography variant='body1' mt={5}>
+            Nothing to display. Start rating some shows and they will appear
+            here!
+          </Typography>
+        </Box>
+      )}
       <Box>
         <ColumnDisplay
           data={
